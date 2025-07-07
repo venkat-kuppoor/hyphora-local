@@ -1,2 +1,5 @@
+from hyphora_local.cli import app
+
+
 def main() -> None:
-    print("Hello from hyphora-local!")
+    app()
