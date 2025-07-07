@@ -1,0 +1,17 @@
+[project]
+name = "hyphora-local"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Venkat_Kuppoor", email = "venk@crafteffect.dev" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+hyphora-local = "hyphora_local:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
