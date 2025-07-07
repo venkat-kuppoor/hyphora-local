@@ -1,0 +1,10 @@
+{
+  "typeCheckingMode": "strict",
+  "reportImplicitRelativeImport": true,
+  "include": ["src"],
+  "executionEnvironments": [
+    {
+      "root": "src"
+    }
+  ]
+}
