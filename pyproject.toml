@@ -7,7 +7,9 @@ authors = [
     { name = "Venkat_Kuppoor", email = "venk@crafteffect.dev" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "typer>=0.16.0",
+]
 
 [project.scripts]
 hyphora-local = "hyphora_local:main"
