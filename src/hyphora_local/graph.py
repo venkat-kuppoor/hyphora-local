@@ -33,9 +33,9 @@ def extract_wiki_links(content: str) -> list[str]:
     return links
 
 
-def build_wiki_graph(directory_path: str | Path) -> tuple[nx.DiGraph[str], dict[str, str]]:
+def build_wiki_graph(directory_path: str | Path) -> tuple[nx.DiGraph, dict[str, str]]:  # type: ignore[type-arg]
     """Build a graph from wiki links in markdown files."""
-    graph: nx.DiGraph[str] = nx.DiGraph()  # Directed graph since links have direction
+    graph: nx.DiGraph = nx.DiGraph()  # type: ignore[type-arg] # Directed graph since links have direction
     directory = Path(directory_path)
 
     # Dictionary to store file content for reference
@@ -49,7 +49,7 @@ def build_wiki_graph(directory_path: str | Path) -> tuple[nx.DiGraph[str], dict[
         md_files[node_name] = file_path
 
         # Add node to graph
-        graph.add_node(node_name, file_path=str(file_path))
+        graph.add_node(node_name, file_path=str(file_path))  # type: ignore[no-untyped-call]
 
     # Second pass: extract links and build edges
     for node_name, file_path in md_files.items():
@@ -65,7 +65,7 @@ def build_wiki_graph(directory_path: str | Path) -> tuple[nx.DiGraph[str], dict[
                 for link in links:
                     # Only add edge if the target exists as a file
                     if link in md_files:
-                        graph.add_edge(node_name, link)
+                        graph.add_edge(node_name, link)  # type: ignore[no-untyped-call]
                     else:
                         # Optionally track broken links
                         print(f"Broken link in {node_name}: {link}")
@@ -73,23 +73,23 @@ def build_wiki_graph(directory_path: str | Path) -> tuple[nx.DiGraph[str], dict[
         except Exception as e:
             print(f"Error processing {file_path}: {e}")
 
-    return graph, file_contents
+    return graph, file_contents  # type: ignore[return-value]
 
 
-def analyze_graph(graph: nx.DiGraph[str]) -> None:
+def analyze_graph(graph: nx.DiGraph) -> None:  # type: ignore[type-arg]
     """Analyze the wiki link graph."""
     print("Graph Statistics:")
-    print(f"- Nodes (files): {graph.number_of_nodes()}")
-    print(f"- Edges (links): {graph.number_of_edges()}")
+    print(f"- Nodes (files): {graph.number_of_nodes()}")  # type: ignore[no-untyped-call]
+    print(f"- Edges (links): {graph.number_of_edges()}")  # type: ignore[no-untyped-call]
     density: float = cast(float, nx.density(graph))  # type: ignore[reportUnknownMemberType]
     print(f"- Density: {density:.3f}")
-    print(f"- Is connected: {nx.is_weakly_connected(graph)}")
+    print(f"- Is connected: {nx.is_weakly_connected(graph)}")  # type: ignore[no-untyped-call]
 
     # Find most linked pages
     # Get in-degree for each node
     in_degree: dict[str, int] = {}
-    for node in graph.nodes():
-        in_degree[node] = cast(int, graph.in_degree(node))
+    for node in graph.nodes():  # type: ignore[no-untyped-call]
+        in_degree[node] = cast(int, graph.in_degree(node))  # type: ignore[no-untyped-call]
     most_linked = sorted(in_degree.items(), key=lambda x: x[1], reverse=True)[:10]
     print("\nMost linked pages:")
     for page, count in most_linked:
@@ -98,8 +98,8 @@ def analyze_graph(graph: nx.DiGraph[str]) -> None:
     # Find pages with most outgoing links
     # Get out-degree for each node
     out_degree: dict[str, int] = {}
-    for node in graph.nodes():
-        out_degree[node] = cast(int, graph.out_degree(node))
+    for node in graph.nodes():  # type: ignore[no-untyped-call]
+        out_degree[node] = cast(int, graph.out_degree(node))  # type: ignore[no-untyped-call]
     most_linking = sorted(out_degree.items(), key=lambda x: x[1], reverse=True)[:10]
     print("\nPages with most outgoing links:")
     for page, count in most_linking:
@@ -107,6 +107,6 @@ def analyze_graph(graph: nx.DiGraph[str]) -> None:
 
     # Find isolated nodes (no links in or out)
     # Find isolated nodes (no links in or out)
-    isolated: list[str] = [node for node in graph.nodes() if graph.degree(node) == 0]
+    isolated: list[str] = [node for node in graph.nodes() if graph.degree(node) == 0]  # type: ignore[no-untyped-call]
     if isolated:
         print(f"\nIsolated pages ({len(isolated)}): {isolated[:10]}")
