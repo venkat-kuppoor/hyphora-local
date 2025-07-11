@@ -1,0 +1,1 @@
+Before other commands like `hyphora sync` and `hyphora start` are run, the application will check if the version of the [[Hyphora CLI]] is consistent with the version of the [[Hyphora Vault]] by checking [[Hyphora Metadata]], which contains the meta data for the hyphora project.
