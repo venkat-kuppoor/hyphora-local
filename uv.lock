@@ -15,6 +15,15 @@ wheels = [
 ]
 
 [[package]]
+name = "caribou"
+version = "0.4.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/6c/74/de2c20c5a24811d69a2a6150d5cd841f2af21ffc65ff964a73f46738bb68/caribou-0.4.1.tar.gz", hash = "sha256:13a66fc9ef9b1c9e9ef220876d59a44ee5eff9e579655252271b7514fc0ad787", size = 14019, upload-time = "2024-10-01T03:43:33.783Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b5/91/795eccdad6abd41b3634502d0971cb696d2e5c9cede67f8b38ebe30d2b1e/caribou-0.4.1-py2.py3-none-any.whl", hash = "sha256:5c7a036584b34021011f1512620152272924e55ca87c7c805073aeef31c5baed", size = 7203, upload-time = "2024-10-01T03:43:29.905Z" },
+]
+
+[[package]]
 name = "click"
 version = "8.2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -40,6 +49,7 @@ name = "hyphora-local"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "caribou" },
     { name = "networkx" },
     { name = "typer" },
 ]
@@ -52,6 +62,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "caribou", specifier = ">=0.4.1" },
     { name = "networkx", specifier = ">=3.5" },
     { name = "typer", specifier = ">=0.16.0" },
 ]
