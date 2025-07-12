@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import datetime
 
+import sqlite_vec  # type: ignore[import-untyped]
 from .config import HyphoraConfig
 
 
@@ -34,6 +35,9 @@ def sync_vault_to_database(config: HyphoraConfig) -> tuple[int, int, int]:
 
     # Connect to database
     conn = sqlite3.connect(config.db_path)
+    conn.enable_load_extension(True)
+    sqlite_vec.load(conn)  # type: ignore[no-untyped-call]
+    conn.enable_load_extension(False)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 

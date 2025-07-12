@@ -1,6 +1,7 @@
 import typer
 from pathlib import Path
 from typing import cast
+import caribou  # type: ignore[import-untyped]
 from hyphora_local.config import load_hyphora_config
 from hyphora_local.graph import build_wiki_graph, analyze_graph, extract_wiki_links  # type: ignore[attr-defined]
 from hyphora_local.sync import sync_vault_to_database
@@ -134,6 +135,34 @@ def sync():
 
             except Exception as e:
                 typer.echo(f"Error during sync: {e}")
+                raise typer.Exit(1)
+
+        case ("error", err):
+            typer.echo(f"Configuration error: {err}")
+            raise typer.Exit(1)
+
+
+@app.command()
+def update():
+    """Apply database migrations to bring the database up to date."""
+    match load_hyphora_config():
+        case ("ok", conf):
+            typer.echo(f"Database: {conf.db_path}")
+            typer.echo("-" * 50)
+
+            # Ensure database directory exists
+            conf.db_path.parent.mkdir(parents=True, exist_ok=True)
+
+            # Get migrations directory
+            migrations_dir = Path(__file__).parent.parent.parent / "migrations"
+
+            try:
+                # Upgrade to most recent version
+                caribou.upgrade(str(conf.db_path), str(migrations_dir))  # type: ignore[no-untyped-call]
+                typer.echo("Database migrations applied successfully!")
+
+            except Exception as e:
+                typer.echo(f"Error applying migrations: {e}")
                 raise typer.Exit(1)
 
         case ("error", err):
