@@ -10,6 +10,7 @@ requires-python = ">=3.13"
 dependencies = [
     "caribou>=0.4.1",
     "networkx>=3.5",
+    "sqlite-vec>=0.1.6",
     "typer>=0.16.0",
 ]
 
