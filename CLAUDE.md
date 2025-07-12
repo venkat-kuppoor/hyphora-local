@@ -38,16 +38,31 @@ uv build
 ```bash
 # Run the CLI tool
 hyphora-local --help
+
+# Apply database migrations (run this first to set up the database)
+hyphora-local update
+
+# Sync markdown files from vault to database
+hyphora-local sync
+
+# Analyze vault and build wiki link graph
 hyphora-local analyze-vault
+
+# Find wiki links in a specific file
 hyphora-local find-links <file_path>
+
+# Show link statistics
 hyphora-local link-stats
 ```
 
 ### Database Migrations
 
 ```bash
-# Run migrations using caribou
+# Run migrations using caribou CLI (alternative to hyphora-local update)
 caribou migrate migrations
+
+# Run migrations programmatically via CLI
+hyphora-local update
 ```
 
 ## Architecture Overview
@@ -60,7 +75,7 @@ analyze wiki-style links between documents.
 1. **CLI Interface** (`src/hyphora_local/cli.py`):
 
    - Built with Typer framework
-   - Three main commands: `analyze-vault`, `find-links`, `link-stats`
+   - Commands: `update`, `sync`, `analyze-vault`, `find-links`, `link-stats`
    - Entry point is the `main()` function in `__init__.py`
 
 2. **Configuration** (`src/hyphora_local/config.py`):
@@ -70,13 +85,20 @@ analyze wiki-style links between documents.
    - Configuration includes vault path and database path
    - Pattern: `ConfigResult = tuple[Config | None, list[str]]`
 
-3. **Graph Analysis** (`src/hyphora_local/graph.py`):
+3. **Sync Engine** (`src/hyphora_local/sync.py`):
+
+   - Syncs markdown files from vault to SQLite database
+   - Detects changes using filesystem modification time
+   - Handles insertions, updates, and deletions
+   - Uses relative paths as document titles
+
+4. **Graph Analysis** (`src/hyphora_local/graph.py`):
 
    - Extracts wiki links in formats: `[[Link]]`, `[[Link|Display]]`, `[[Link#Section]]`
    - Uses NetworkX for graph operations
    - Analyzes link relationships, connectivity, and statistics
 
-4. **Database Schema** (defined in `migrations/`):
+5. **Database Schema** (defined in `migrations/`):
    - SQLite database stored in `.hyphora/hyphora.db`
    - Tables:
      - `vault`: Stores markdown files (id, title, content, modified_at)
