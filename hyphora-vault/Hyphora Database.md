@@ -13,3 +13,5 @@ Vault
 
 ## Migrations
 We use a simple python library called caribou built primarily to manage the evolution of client side databases over multiple releases of an application.
+
+Migrations files will be in the migrations directory of the source code for Hyphora
