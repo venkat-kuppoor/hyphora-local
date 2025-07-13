@@ -126,12 +126,24 @@ def sync():
             typer.echo("-" * 50)
 
             try:
-                inserted, updated, deleted = sync_vault_to_database(conf)
+                typer.echo("Syncing documents...")
+
+                # Progress callback that shows embedding generation progress
+                def progress_callback(current: int, total: int, msg: str) -> None:
+                    typer.echo(f"\r[{current}/{total}] {msg[:60]}...", nl=False)
+
+                inserted, updated, deleted, embeddings_generated = (
+                    sync_vault_to_database(conf, progress_callback)
+                )
+
+                if embeddings_generated > 0:
+                    typer.echo()  # New line after progress
 
                 typer.echo("\nSync completed successfully:")
                 typer.echo(f"  - Inserted: {inserted} documents")
                 typer.echo(f"  - Updated: {updated} documents")
                 typer.echo(f"  - Deleted: {deleted} documents")
+                typer.echo(f"  - Embeddings generated: {embeddings_generated}")
 
             except Exception as e:
                 typer.echo(f"Error during sync: {e}")
