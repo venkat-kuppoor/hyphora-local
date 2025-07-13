@@ -5,6 +5,7 @@ import caribou  # type: ignore[import-untyped]
 from hyphora_local.config import load_hyphora_config
 from hyphora_local.graph import build_wiki_graph, analyze_graph, extract_wiki_links  # type: ignore[attr-defined]
 from hyphora_local.sync import sync_vault_to_database
+from hyphora_local.search import search_documents
 
 app = typer.Typer()
 
@@ -175,6 +176,74 @@ def update():
 
             except Exception as e:
                 typer.echo(f"Error applying migrations: {e}")
+                raise typer.Exit(1)
+
+        case ("error", err):
+            typer.echo(f"Configuration error: {err}")
+            raise typer.Exit(1)
+
+
+@app.command()
+def search(
+    query: str,
+    limit: int = typer.Option(3, "--limit", "-l", help="Number of results to return"),
+    k: int = typer.Option(
+        10, "--k", help="Number of candidates from each search method"
+    ),
+    rrf_k: int = typer.Option(60, "--rrf-k", help="RRF constant"),
+    weight_fts: float = typer.Option(
+        1.0, "--weight-fts", help="Weight for FTS5 results"
+    ),
+    weight_vec: float = typer.Option(
+        1.0, "--weight-vec", help="Weight for vector results"
+    ),
+):
+    """Search documents using reciprocal rank fusion of FTS5 and vector search."""
+    match load_hyphora_config():
+        case ("ok", conf):
+            try:
+                typer.echo(f"Searching for: '{query}'")
+                typer.echo("-" * 50)
+
+                results = search_documents(
+                    conf,
+                    query,
+                    k=k,
+                    rrf_k=rrf_k,
+                    weight_fts=weight_fts,
+                    weight_vec=weight_vec,
+                    limit=limit,
+                )
+
+                if not results:
+                    typer.echo("No results found.")
+                    return
+
+                for i, result in enumerate(results, 1):
+                    typer.echo(f"\n{i}. {result.title}")
+                    typer.echo(f"   Combined Score: {result.combined_rank:.4f}")
+
+                    rank_info: list[str] = []
+                    if result.fts_rank is not None:
+                        rank_info.append(
+                            f"FTS: #{result.fts_rank} (score: {result.fts_score:.2f})"
+                        )
+                    if result.vec_rank is not None:
+                        rank_info.append(
+                            f"Vector: #{result.vec_rank} (dist: {result.vec_distance:.4f})"
+                        )
+
+                    if rank_info:
+                        typer.echo(f"   Ranks: {' | '.join(rank_info)}")
+
+                    # Show content preview (first 200 chars)
+                    content_preview = result.content[:200].replace("\n", " ")
+                    if len(result.content) > 200:
+                        content_preview += "..."
+                    typer.echo(f"   Preview: {content_preview}")
+
+            except Exception as e:
+                typer.echo(f"Error during search: {e}")
                 raise typer.Exit(1)
 
         case ("error", err):
