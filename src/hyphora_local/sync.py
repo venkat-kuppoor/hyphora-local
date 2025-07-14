@@ -5,6 +5,7 @@ from typing import Callable, cast
 import ollama  # type: ignore[import-untyped]
 import sqlite_vec  # type: ignore[import-untyped]
 from .config import HyphoraConfig
+from .graph import extract_wiki_links
 
 
 def generate_embedding(
@@ -37,19 +38,57 @@ def generate_embedding(
         raise RuntimeError(f"Failed to generate embedding: {e}")
 
 
+def extract_and_store_links(cursor: sqlite3.Cursor) -> int:
+    """Extract wiki links from all documents and store in links table."""
+    # Clear existing links
+    cursor.execute("DELETE FROM links")
+    
+    # Get all documents with their content
+    cursor.execute("SELECT id, title, content FROM vault")
+    documents = cursor.fetchall()
+    
+    links_added = 0
+    
+    for doc in documents:
+        source_id = cast(int, doc["id"])
+        content = cast(str, doc["content"])
+        
+        # Extract wiki links from content
+        wiki_links = extract_wiki_links(content)
+        
+        for link_text in wiki_links:
+            # Try to find the target document by title
+            # Look for exact matches first, then try with .md extension
+            cursor.execute("SELECT id FROM vault WHERE title = ? OR title = ?", 
+                          (link_text, f"{link_text}.md"))
+            target_row = cursor.fetchone()
+            
+            if target_row:
+                target_id = cast(int, target_row["id"])
+                # Insert the link relationship
+                cursor.execute(
+                    "INSERT OR IGNORE INTO links (source_id, target_id) VALUES (?, ?)",
+                    (source_id, target_id)
+                )
+                links_added += 1
+    
+    return links_added
+
+
 def sync_vault_to_database(
     config: HyphoraConfig,
     progress_callback: Callable[[int, int, str], None] | None = None,
-) -> tuple[int, int, int, int]:
+) -> tuple[int, int, int, int, int]:
     """
     Sync markdown files from the vault directory to the database.
 
-    Returns a tuple of (inserted, updated, deleted, embeddings_generated) counts.
+    Returns a tuple of (inserted, updated, deleted, embeddings_generated, links_extracted) counts.
     """
     inserted = 0
     updated = 0
     deleted = 0
     embeddings_generated = 0
+    links_extracted = 0
 
     # Get all markdown files from the vault
     vault_files: dict[str, dict[str, str]] = {}
@@ -187,8 +226,15 @@ def sync_vault_to_database(
                         )
 
             conn.commit()
+        
+        # Phase 3: Extract and store wiki links
+        if progress_callback:
+            progress_callback(1, 1, "Extracting wiki links...")
+        
+        links_extracted = extract_and_store_links(cursor)
+        conn.commit()
 
     finally:
         conn.close()
 
-    return inserted, updated, deleted, embeddings_generated
+    return inserted, updated, deleted, embeddings_generated, links_extracted
