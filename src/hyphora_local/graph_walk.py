@@ -1,9 +1,46 @@
 import sqlite3
+import re
 from typing import NamedTuple, Optional, Any
 from dataclasses import dataclass
 
 from .config import HyphoraConfig
 from .search import SearchResult, search_documents
+
+
+def sanitize_fts5_query(text: str, max_terms: int = 10) -> str:
+    """
+    Sanitize text for use as an FTS5 query by extracting key terms.
+    
+    Args:
+        text: Input text (could be document content)
+        max_terms: Maximum number of terms to include in query
+        
+    Returns:
+        Sanitized query string safe for FTS5
+    """
+    # Remove special characters and extract words
+    words = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
+    
+    # Remove common stop words
+    stop_words = {
+        'the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'had', 
+        'her', 'was', 'one', 'our', 'out', 'day', 'get', 'has', 'him', 'his', 
+        'how', 'man', 'new', 'now', 'old', 'see', 'two', 'way', 'who', 'boy',
+        'did', 'its', 'let', 'put', 'say', 'she', 'too', 'use'
+    }
+    
+    # Filter out stop words and get unique terms
+    meaningful_words: list[str] = []
+    seen: set[str] = set()
+    for word in words:
+        if word not in stop_words and word not in seen and len(word) >= 3:
+            meaningful_words.append(word)
+            seen.add(word)
+            if len(meaningful_words) >= max_terms:
+                break
+    
+    # Join with spaces (simple FTS5 query)
+    return ' '.join(meaningful_words) if meaningful_words else 'document'
 
 
 @dataclass
@@ -81,11 +118,14 @@ def score_neighbors_multi_query(
         
         # Score this neighbor against each query
         for i, query in enumerate(queries):
+            # Sanitize query for FTS5 compatibility
+            sanitized_query = sanitize_fts5_query(query)
+            
             # Use existing search_documents but create a temporary result set
             # that only includes this neighbor to get its RRF score
             all_results = search_documents(
                 config, 
-                query, 
+                sanitized_query, 
                 k=rrf_params.get("k", 10),
                 rrf_k=rrf_params.get("rrf_k", 60),
                 weight_fts=rrf_params.get("weight_fts", 1.0),
@@ -104,7 +144,7 @@ def score_neighbors_multi_query(
                 score = neighbor_result.combined_rank
                 query_details.append(QueryScore(
                     query_type=f"query_{i}" if i > 0 else "original",
-                    query_text=query[:50] + "..." if len(query) > 50 else query,
+                    query_text=sanitized_query[:50] + "..." if len(sanitized_query) > 50 else sanitized_query,
                     rrf_score=score,
                     vec_rank=neighbor_result.vec_rank,
                     fts_rank=neighbor_result.fts_rank
@@ -115,7 +155,7 @@ def score_neighbors_multi_query(
                 individual_scores.append(0.0)
                 query_details.append(QueryScore(
                     query_type=f"query_{i}" if i > 0 else "original",
-                    query_text=query[:50] + "..." if len(query) > 50 else query,
+                    query_text=sanitized_query[:50] + "..." if len(sanitized_query) > 50 else sanitized_query,
                     rrf_score=0.0,
                     vec_rank=None,
                     fts_rank=None

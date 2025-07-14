@@ -50,14 +50,10 @@ hyphora-local search "your search query"
 hyphora-local search "machine learning" --limit 5 --weight-fts 1.5 --weight-vec 0.8
 hyphora-local search "neural networks" --k 20 --rrf-k 100
 
-# Analyze vault and build wiki link graph
-hyphora-local analyze-vault
-
-# Find wiki links in a specific file
-hyphora-local find-links <file_path>
-
-# Show link statistics
-hyphora-local link-stats
+# Advanced search with recursive graph walk for context expansion
+hyphora-local walk "your search query"
+hyphora-local walk "machine learning" --seed-limit 3 --max-hops 5 --score-threshold 0.1
+hyphora-local walk "neural networks" --weight-original 0.8 --weight-current 0.2
 ```
 
 ### Database Migrations
