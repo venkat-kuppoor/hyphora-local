@@ -1,6 +1,5 @@
 import typer
 from pathlib import Path
-from typing import cast
 import caribou  # type: ignore[import-untyped]
 from hyphora_local.config import load_hyphora_config
 from hyphora_local.sync import sync_vault_to_database
