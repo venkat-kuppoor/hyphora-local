@@ -149,7 +149,7 @@ def walk(
     query: str,
     seed_limit: int = typer.Option(3, "--seed-limit", help="Number of seed documents from initial search"),
     max_hops: int = typer.Option(5, "--max-hops", help="Maximum number of hops in graph walk"),
-    score_threshold: float = typer.Option(0.1, "--score-threshold", help="Minimum score threshold for continuing walk"),
+    score_threshold: float = typer.Option(0.01, "--score-threshold", help="Minimum score threshold for continuing walk"),
     k: int = typer.Option(10, "--k", help="Number of candidates from each search method"),
     rrf_k: int = typer.Option(60, "--rrf-k", help="RRF constant"),
     weight_fts: float = typer.Option(1.0, "--weight-fts", help="Weight for FTS5 results"),

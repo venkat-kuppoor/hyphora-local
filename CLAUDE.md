@@ -52,7 +52,7 @@ hyphora-local search "neural networks" --k 20 --rrf-k 100
 
 # Advanced search with recursive graph walk for context expansion
 hyphora-local walk "your search query"
-hyphora-local walk "machine learning" --seed-limit 3 --max-hops 5 --score-threshold 0.1
+hyphora-local walk "machine learning" --seed-limit 3 --max-hops 5 --score-threshold 0.01
 hyphora-local walk "neural networks" --weight-original 0.8 --weight-current 0.2
 ```
 
