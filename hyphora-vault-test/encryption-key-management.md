@@ -1,0 +1,11 @@
+---
+title: Encryption Key Management
+type: architecture
+tags: [#security, #encryption, #key-management]
+---
+
+The encryption key management system in CollabVault provides a robust framework for generating, distributing, rotating, and retiring cryptographic keys used throughout the platform. Built on a hierarchical key structure with hardware security module (HSM) roots of trust, the system ensures that encryption keys are never exposed in plaintext outside of secure enclaves. This architecture supports the [[end-to-end-encryption|E2EE implementation]] while enabling necessary capabilities like [[legal-hold|legal hold]] and [[disaster-recovery|disaster recovery]] through carefully designed key escrow mechanisms.
+
+Key lifecycle management in CollabVault follows industry best practices with automated key rotation schedules that vary based on key usage patterns and [[data-classification|data sensitivity levels]]. The system maintains multiple key versions to enable decryption of historical data while ensuring forward secrecy for new content. Master keys are distributed across multiple HSMs using threshold cryptography, requiring a quorum of key custodians to perform sensitive operations like key recovery or emergency access. All key operations generate comprehensive [[audit-logs|audit log entries]] that provide cryptographic proof of key usage.
+
+The key management infrastructure integrates deeply with other platform components, providing transparent key services to the [[file-storage|storage system]], [[message-channels|messaging infrastructure]], and [[workspace-isolation|workspace isolation mechanisms]]. Advanced features include quantum-resistant algorithm support for long-term data protection, key usage analytics that identify abnormal patterns through the [[threat-detection|threat detection system]], and compliance reporting that demonstrates adherence to key management requirements in the [[compliance-framework|compliance framework]]. The system also supports bring-your-own-key (BYOK) scenarios for organizations requiring complete control over their cryptographic materials.

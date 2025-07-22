@@ -1,0 +1,11 @@
+---
+title: Quantum-Safe Cryptography
+type: architecture
+tags: [#security, #cryptography, #future-proofing]
+---
+
+CollabVault implements quantum-safe cryptographic algorithms to protect sensitive data against future threats from quantum computers capable of breaking traditional encryption methods. The platform employs a hybrid approach that combines classical cryptographic algorithms with post-quantum alternatives, ensuring compatibility with existing systems while providing protection against quantum attacks. This dual-algorithm strategy is managed by the [[encryption-key-management|key management system]] which transparently handles the complexity of multiple encryption schemes.
+
+The quantum-safe implementation covers all aspects of cryptography within CollabVault, including key exchange protocols used in [[end-to-end-encryption|E2EE communications]], digital signatures in the [[audit-logs|audit system]], and long-term encryption for archived data in the [[file-storage|storage infrastructure]]. The platform uses lattice-based cryptography and hash-based signatures that are believed to be resistant to quantum attacks, with the ability to quickly adopt new algorithms as post-quantum cryptography standards evolve. All quantum-safe operations maintain performance comparable to classical cryptography through optimized implementations and hardware acceleration.
+
+Migration to quantum-safe cryptography is managed through a careful transition strategy that maintains backward compatibility while progressively strengthening security. The [[versioning-system|versioning system]] tracks which cryptographic algorithms were used for each piece of data, enabling future re-encryption as needed. [[Compliance-reporting|Compliance reports]] include quantum readiness assessments that help organizations demonstrate long-term data protection strategies to regulators and stakeholders. The platform's [[threat-detection|threat detection system]] monitors for indicators of quantum computing capabilities being used against the system, providing early warning of the need to accelerate quantum-safe adoption.

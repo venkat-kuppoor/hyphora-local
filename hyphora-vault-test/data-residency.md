@@ -1,0 +1,11 @@
+---
+title: Data Residency
+type: feature
+tags: [#compliance, #data-governance, #geography]
+---
+
+Data residency controls in CollabVault ensure that sensitive information remains within specified geographic boundaries to comply with sovereignty laws and regulatory requirements. The platform implements sophisticated data placement algorithms that consider [[data-classification|classification levels]], applicable regulations from the [[compliance-framework|compliance framework]], and organizational policies when determining where data can be stored and processed. These controls extend beyond simple storage location to encompass data in transit, ensuring that even temporary processing occurs only in approved jurisdictions.
+
+The residency system maintains detailed metadata about data lineage and location history, tracking not just where data currently resides but where it has been throughout its lifecycle. This information is crucial for demonstrating compliance during audits and is preserved in the [[audit-logs|audit system]]. When users attempt to access data across jurisdictional boundaries, the platform can apply additional controls such as enhanced [[access-control|access verification]], data transformation to remove regulated elements, or complete blocking based on policy requirements.
+
+Advanced residency features include dynamic data migration capabilities that automatically move information between regions based on changing regulations or business needs while maintaining continuous availability. The system integrates with the [[disaster-recovery|disaster recovery infrastructure]] to ensure that backup and failover mechanisms respect residency requirements even during emergency scenarios. [[Performance-analytics|Analytics]] provide insights into cross-border data access patterns, helping organizations optimize their global infrastructure while maintaining compliance. The residency controls work seamlessly with [[workspace-isolation|workspace isolation]] to ensure that multinational organizations can collaborate effectively while respecting local data protection laws.

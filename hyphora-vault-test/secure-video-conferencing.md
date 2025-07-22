@@ -1,0 +1,11 @@
+---
+title: Secure Video Conferencing
+type: feature
+tags: [#communication, #security, #real-time]
+---
+
+Secure video conferencing in CollabVault provides enterprise-grade video collaboration capabilities with military-level security controls suitable for the most sensitive discussions in regulated industries. Built on [[end-to-end-encryption|end-to-end encryption]] architecture, the video platform ensures that audio and video streams never exist in plaintext outside of participant devices, while maintaining the performance and reliability required for business-critical communications. The system implements perfect forward secrecy with automatic key rotation managed by the [[encryption-key-management|key management infrastructure]].
+
+The conferencing platform integrates seamlessly with CollabVault's security architecture, requiring [[multi-factor-authentication|multi-factor authentication]] for meeting access and respecting [[access-control|access controls]] when determining meeting participation. Meeting recordings, when enabled, are encrypted at rest in the [[file-storage|storage system]] and subject to the same [[data-classification|classification]] and [[data-retention-policy|retention policies]] as other platform content. Advanced security features include meeting lock controls, participant verification through [[biometric-authentication|biometric methods]], and automatic meeting termination if suspicious activity is detected.
+
+The video conferencing system provides specialized capabilities for different use cases including [[virtual-data-rooms|virtual data room]] presentations with screen sharing restrictions, secure [[guest-sharing|external participant]] access with limited privileges, and recording with automatic transcription that maintains security classifications. All meeting activities generate detailed [[audit-logs|audit entries]] including participant lists, duration, and feature usage, while the [[threat-detection|threat detection system]] monitors for unauthorized recording attempts or other policy violations. Meeting analytics through the [[performance-analytics|analytics platform]] help organizations optimize their conferencing infrastructure while maintaining privacy through aggregate-only reporting.

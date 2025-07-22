@@ -1,0 +1,11 @@
+---
+title: Biometric Authentication
+type: feature
+tags: [#security, #authentication, #biometrics]
+---
+
+Biometric authentication in CollabVault provides advanced identity verification using unique biological characteristics such as fingerprints, voice patterns, facial recognition, and behavioral biometrics to enhance security beyond traditional [[multi-factor-authentication|MFA methods]]. The biometric system creates cryptographic templates from biological data that cannot be reverse-engineered to recreate the original biometric, ensuring that even if authentication databases are compromised, actual biometric information remains protected. These templates are stored using [[end-to-end-encryption|encryption]] and distributed across multiple secure enclaves to prevent single points of failure.
+
+The biometric infrastructure supports liveness detection to prevent spoofing attacks using photographs, recordings, or synthetic biometric data, while providing fallback mechanisms for users with disabilities or those who prefer alternative authentication methods. Biometric matching occurs locally on user devices whenever possible, with only encrypted match results transmitted to CollabVault servers, minimizing the exposure of biometric data. The system integrates with the [[zero-trust-architecture|zero trust architecture]] to provide continuous authentication where biometric checks occur periodically during active sessions based on risk assessment.
+
+Advanced biometric capabilities include multimodal authentication that combines multiple biometric factors for higher security assurance, adaptive templates that improve accuracy over time while maintaining user privacy, and biometric analytics that detect unusual authentication patterns through the [[threat-detection|threat detection system]]. All biometric operations are subject to strict privacy controls governed by the [[compliance-framework|compliance framework]] and are logged in the [[audit-logs|audit system]] with special handling for biometric-related events. The system provides comprehensive consent management and opt-out capabilities while maintaining alternative authentication paths that don't compromise security for users who prefer not to use biometric authentication.

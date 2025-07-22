@@ -1,0 +1,11 @@
+---
+title: Insider Threat Detection
+type: feature
+tags: [#security, #monitoring, #behavioral-analytics]
+---
+
+Insider threat detection in CollabVault employs advanced behavioral analytics and machine learning to identify potentially malicious activities by authorized users who may be abusing their legitimate access privileges. The system establishes behavioral baselines for each user based on their typical [[access-control|access patterns]], [[message-channels|communication habits]], and data interaction behaviors, using these baselines to detect anomalies that might indicate insider threats such as data exfiltration, unauthorized access to sensitive information, or sabotage attempts.
+
+The detection engine analyzes multiple behavioral dimensions including access timing patterns, data download volumes, [[enterprise-search|search queries]] for sensitive information, and collaboration network changes that might indicate an insider developing unauthorized relationships. Unlike external threat detection, insider threat analysis must balance security concerns with employee privacy, implementing differential privacy techniques that detect threats without enabling surveillance of individual employees. All detection algorithms are subject to approval through the [[compliance-framework|compliance framework]] and regular review by privacy officers.
+
+Advanced insider threat capabilities include psycholinguistic analysis of [[secure-messaging|messages]] and documents to detect stress, deception, or hostile sentiment, correlation with external events such as performance reviews or resignation announcements, and integration with HR systems to identify elevated-risk periods. The system generates risk scores rather than binary alerts, allowing security teams to investigate concerning patterns while avoiding false accusations. All insider threat activities are logged in specialized [[audit-logs|audit systems]] with restricted access, and investigations follow strict procedures designed to protect employee rights while ensuring organizational security through the [[incident-response|incident response framework]].
