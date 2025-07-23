@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Literal
 
 CONFIG_DIR_NAME = ".hyphora"
-VAULT_DIR_NAME = "hyphora-vault"
+VAULT_DIR_NAME = "hyphora-vault-test"
 CONFIG_FILE_NAME = "hyphora.toml"
 DB_FILE_NAME = "hyphora.db"
 
