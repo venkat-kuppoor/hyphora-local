@@ -169,11 +169,16 @@ def sync_vault_to_database(
         """)
         missing_embeddings = cursor.fetchall()
 
-        # Combine all documents needing embeddings
+        # Combine all documents needing embeddings using a set to avoid duplicates
+        doc_ids_to_process: set[int] = set(docs_needing_embeddings)
+        
+        # Add IDs from documents missing embeddings
+        for row in missing_embeddings:
+            doc_ids_to_process.add(cast(int, row["id"]))
+        
+        # Now fetch all unique documents
         all_docs_needing_embeddings: list[sqlite3.Row] = []
-
-        # Add newly inserted/updated documents
-        for doc_id in docs_needing_embeddings:
+        for doc_id in doc_ids_to_process:
             cursor.execute(
                 "SELECT id, content, title FROM vault WHERE id = ?", (doc_id,)
             )
@@ -181,14 +186,7 @@ def sync_vault_to_database(
             if row:
                 all_docs_needing_embeddings.append(row)
 
-        # Add documents missing embeddings
-        all_docs_needing_embeddings.extend(missing_embeddings)
-
         if all_docs_needing_embeddings:
-            # Get existing embeddings to know if we need to update or insert
-            cursor.execute("SELECT id FROM vault_vec")
-            existing_embeddings = {row["id"] for row in cursor.fetchall()}
-
             total = len(all_docs_needing_embeddings)
             for i, row in enumerate(all_docs_needing_embeddings):
                 doc_id = cast(int, row["id"])
@@ -206,18 +204,27 @@ def sync_vault_to_database(
                 if embedding is not None:
                     embedding_bytes = sqlite_vec.serialize_float32(embedding)  # type: ignore[no-untyped-call]
 
-                    if doc_id in existing_embeddings:
-                        cursor.execute(
-                            "UPDATE vault_vec SET embedding = ? WHERE id = ?",
-                            (embedding_bytes, doc_id),
-                        )
-                    else:
+                    try:
+                        # First check if the embedding already exists
+                        cursor.execute("SELECT id FROM vault_vec WHERE id = ?", (doc_id,))
+                        exists = cursor.fetchone() is not None
+                        
+                        if exists:
+                            # Delete the old embedding first
+                            cursor.execute("DELETE FROM vault_vec WHERE id = ?", (doc_id,))
+                        
+                        # Now insert the new embedding
                         cursor.execute(
                             "INSERT INTO vault_vec (id, embedding) VALUES (?, ?)",
                             (doc_id, embedding_bytes),
                         )
-
-                    embeddings_generated += 1
+                        
+                        embeddings_generated += 1
+                    except sqlite3.IntegrityError as e:
+                        # Log the specific error details
+                        print(f"IntegrityError for doc_id {doc_id}, title: {title}")
+                        print(f"Error: {e}")
+                        raise
                 else:
                     # Skip documents with very short content
                     if progress_callback:
