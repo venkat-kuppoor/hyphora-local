@@ -18,8 +18,12 @@ def sanitize_fts5_query(text: str, max_terms: int = 10) -> str:
     Returns:
         Sanitized query string safe for FTS5
     """
-    # Remove special characters and extract words
-    words = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
+    # First, escape FTS5 special characters by removing them
+    # FTS5 special chars: " ^ * ( ) : { } [ ] -
+    cleaned_text = re.sub(r'["\^\*\(\)\:\{\}\[\]\-]', ' ', text)
+    
+    # Extract alphabetic words (3+ characters)
+    words = re.findall(r'\b[a-zA-Z]{3,}\b', cleaned_text.lower())
     
     # Remove common stop words
     stop_words = {
@@ -34,13 +38,14 @@ def sanitize_fts5_query(text: str, max_terms: int = 10) -> str:
     seen: set[str] = set()
     for word in words:
         if word not in stop_words and word not in seen and len(word) >= 3:
-            meaningful_words.append(word)
+            # Double-quote each term to ensure it's treated as a literal
+            meaningful_words.append(f'"{word}"')
             seen.add(word)
             if len(meaningful_words) >= max_terms:
                 break
     
-    # Join with spaces (simple FTS5 query)
-    return ' '.join(meaningful_words) if meaningful_words else 'document'
+    # Join with spaces (each term is quoted for safety)
+    return ' '.join(meaningful_words) if meaningful_words else '"document"'
 
 
 @dataclass
