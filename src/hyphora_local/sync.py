@@ -42,36 +42,38 @@ def extract_and_store_links(cursor: sqlite3.Cursor) -> int:
     """Extract wiki links from all documents and store in links table."""
     # Clear existing links
     cursor.execute("DELETE FROM links")
-    
+
     # Get all documents with their content
     cursor.execute("SELECT id, title, content FROM vault")
     documents = cursor.fetchall()
-    
+
     links_added = 0
-    
+
     for doc in documents:
         source_id = cast(int, doc["id"])
         content = cast(str, doc["content"])
-        
+
         # Extract wiki links from content
         wiki_links = extract_wiki_links(content)
-        
+
         for link_text in wiki_links:
             # Try to find the target document by title
             # Look for exact matches first, then try with .md extension
-            cursor.execute("SELECT id FROM vault WHERE title = ? OR title = ?", 
-                          (link_text, f"{link_text}.md"))
+            cursor.execute(
+                "SELECT id FROM vault WHERE title = ? OR title = ?",
+                (link_text, f"{link_text}.md"),
+            )
             target_row = cursor.fetchone()
-            
+
             if target_row:
                 target_id = cast(int, target_row["id"])
                 # Insert the link relationship
                 cursor.execute(
                     "INSERT OR IGNORE INTO links (source_id, target_id) VALUES (?, ?)",
-                    (source_id, target_id)
+                    (source_id, target_id),
                 )
                 links_added += 1
-    
+
     return links_added
 
 
@@ -171,11 +173,11 @@ def sync_vault_to_database(
 
         # Combine all documents needing embeddings using a set to avoid duplicates
         doc_ids_to_process: set[int] = set(docs_needing_embeddings)
-        
+
         # Add IDs from documents missing embeddings
         for row in missing_embeddings:
             doc_ids_to_process.add(cast(int, row["id"]))
-        
+
         # Now fetch all unique documents
         all_docs_needing_embeddings: list[sqlite3.Row] = []
         for doc_id in doc_ids_to_process:
@@ -206,19 +208,23 @@ def sync_vault_to_database(
 
                     try:
                         # First check if the embedding already exists
-                        cursor.execute("SELECT id FROM vault_vec WHERE id = ?", (doc_id,))
+                        cursor.execute(
+                            "SELECT id FROM vault_vec WHERE id = ?", (doc_id,)
+                        )
                         exists = cursor.fetchone() is not None
-                        
+
                         if exists:
                             # Delete the old embedding first
-                            cursor.execute("DELETE FROM vault_vec WHERE id = ?", (doc_id,))
-                        
+                            cursor.execute(
+                                "DELETE FROM vault_vec WHERE id = ?", (doc_id,)
+                            )
+
                         # Now insert the new embedding
                         cursor.execute(
                             "INSERT INTO vault_vec (id, embedding) VALUES (?, ?)",
                             (doc_id, embedding_bytes),
                         )
-                        
+
                         embeddings_generated += 1
                     except sqlite3.IntegrityError as e:
                         # Log the specific error details
@@ -233,11 +239,11 @@ def sync_vault_to_database(
                         )
 
             conn.commit()
-        
+
         # Phase 3: Extract and store wiki links
         if progress_callback:
             progress_callback(1, 1, "Extracting wiki links...")
-        
+
         links_extracted = extract_and_store_links(cursor)
         conn.commit()
 

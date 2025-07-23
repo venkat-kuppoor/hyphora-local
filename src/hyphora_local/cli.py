@@ -147,15 +147,40 @@ def search(
 @app.command()
 def walk(
     query: str,
-    seed_limit: int = typer.Option(3, "--seed-limit", help="Number of seed documents from initial search"),
-    max_hops: int = typer.Option(5, "--max-hops", help="Maximum number of hops in graph walk"),
-    score_threshold: float = typer.Option(0.01, "--score-threshold", help="Minimum score threshold for continuing walk"),
-    k: int = typer.Option(10, "--k", help="Number of candidates from each search method"),
+    seed_limit: int = typer.Option(
+        3, "--seed-limit", help="Number of seed documents from initial search"
+    ),
+    max_hops: int = typer.Option(
+        5, "--max-hops", help="Maximum number of hops in graph walk"
+    ),
+    score_threshold: float = typer.Option(
+        0.01, "--score-threshold", help="Minimum score threshold for continuing walk"
+    ),
+    k: int = typer.Option(
+        10, "--k", help="Number of candidates from each search method"
+    ),
     rrf_k: int = typer.Option(60, "--rrf-k", help="RRF constant"),
-    weight_fts: float = typer.Option(1.0, "--weight-fts", help="Weight for FTS5 results"),
-    weight_vec: float = typer.Option(1.0, "--weight-vec", help="Weight for vector results"),
-    query_weight_original: float = typer.Option(0.7, "--weight-original", help="Weight for original query"),
-    query_weight_current: float = typer.Option(0.3, "--weight-current", help="Weight for current node content"),
+    weight_fts: float = typer.Option(
+        1.0, "--weight-fts", help="Weight for FTS5 results"
+    ),
+    weight_vec: float = typer.Option(
+        1.0, "--weight-vec", help="Weight for vector results"
+    ),
+    query_weight_original: float = typer.Option(
+        0.7, "--weight-original", help="Weight for original query"
+    ),
+    query_weight_current: float = typer.Option(
+        0.3, "--weight-current", help="Weight for current node content"
+    ),
+    use_mmr: bool = typer.Option(
+        False, "--mmr", help="Use MMR for diversity-aware selection"
+    ),
+    mmr_lambda: float = typer.Option(
+        0.5, "--mmr-lambda", help="MMR lambda parameter (0=diversity, 1=relevance)"
+    ),
+    mmr_adjacent_k: int = typer.Option(
+        5, "--mmr-adjacent-k", help="Max neighbors to consider per MMR iteration"
+    ),
 ):
     """Search documents using hybrid search + recursive graph walk for context expansion."""
     match load_hyphora_config():
@@ -163,7 +188,7 @@ def walk(
             try:
                 typer.echo(f"Walking graph for: '{query}'")
                 typer.echo("-" * 50)
-                
+
                 # Step 1: Get seed documents using hybrid search
                 typer.echo("Finding seed documents...")
                 seed_results = search_documents(
@@ -175,17 +200,27 @@ def walk(
                     weight_vec=weight_vec,
                     limit=seed_limit,
                 )
-                
+
                 if not seed_results:
                     typer.echo("No seed documents found.")
                     return
-                
+
                 typer.echo(f"Found {len(seed_results)} seed documents:")
                 for i, result in enumerate(seed_results, 1):
-                    typer.echo(f"  {i}. {result.title} (score: {result.combined_rank:.4f})")
-                
+                    typer.echo(
+                        f"  {i}. {result.title} (score: {result.combined_rank:.4f})"
+                    )
+
                 # Step 2: Perform recursive graph walk
-                typer.echo(f"\nPerforming recursive graph walk (max {max_hops} hops)...")
+                mode_text = "MMR-based" if use_mmr else "recursive"
+                typer.echo(
+                    f"\nPerforming {mode_text} graph walk (max {max_hops} hops)..."
+                )
+                if use_mmr:
+                    typer.echo(
+                        f"  MMR parameters: λ={mmr_lambda}, adjacent_k={mmr_adjacent_k}"
+                    )
+
                 walk_steps = recursive_graph_walk(
                     conf,
                     seed_results,
@@ -193,26 +228,38 @@ def walk(
                     max_hops=max_hops,
                     score_threshold=score_threshold,
                     query_weights=[query_weight_original, query_weight_current],
-                    rrf_params={"k": k, "rrf_k": rrf_k, "weight_fts": weight_fts, "weight_vec": weight_vec}
+                    rrf_params={
+                        "k": k,
+                        "rrf_k": rrf_k,
+                        "weight_fts": weight_fts,
+                        "weight_vec": weight_vec,
+                    },
+                    use_mmr=use_mmr,
+                    mmr_lambda=mmr_lambda,
+                    mmr_adjacent_k=mmr_adjacent_k,
                 )
-                
+
                 if not walk_steps:
                     typer.echo("No additional documents found during graph walk.")
                     return
-                
-                typer.echo(f"\nGraph walk found {len(walk_steps)} additional documents:")
+
+                typer.echo(
+                    f"\nGraph walk found {len(walk_steps)} additional documents:"
+                )
                 typer.echo("-" * 50)
-                
+
                 for i, step in enumerate(walk_steps, 1):
                     typer.echo(f"\n{i}. {step.title}")
                     typer.echo(f"   Distance: {step.distance_from_seed} hops from seed")
                     typer.echo(f"   Combined Score: {step.combined_score:.4f}")
-                    
+
                     # Show query breakdown
                     for j, query_score in enumerate(step.query_scores):
-                        typer.echo(f"   Query {j+1} ({query_score.query_type}): {query_score.rrf_score:.4f}")
+                        typer.echo(
+                            f"   Query {j + 1} ({query_score.query_type}): {query_score.rrf_score:.4f}"
+                        )
                         typer.echo(f"     Text: {query_score.query_text}")
-                        
+
                         rank_info: list[str] = []
                         if query_score.fts_rank is not None:
                             rank_info.append(f"FTS: #{query_score.fts_rank}")
@@ -220,24 +267,26 @@ def walk(
                             rank_info.append(f"Vector: #{query_score.vec_rank}")
                         if rank_info:
                             typer.echo(f"     Ranks: {' | '.join(rank_info)}")
-                    
+
                     # Show content preview
                     content_preview = step.content[:200].replace("\n", " ")
                     if len(step.content) > 200:
                         content_preview += "..."
                     typer.echo(f"   Preview: {content_preview}")
-                
+
                 # Summary
-                typer.echo(f"\n{'='*50}")
+                typer.echo(f"\n{'=' * 50}")
                 typer.echo("SUMMARY:")
                 typer.echo(f"Seed documents: {len(seed_results)}")
                 typer.echo(f"Graph walk documents: {len(walk_steps)}")
-                typer.echo(f"Total documents found: {len(seed_results) + len(walk_steps)}")
-                
+                typer.echo(
+                    f"Total documents found: {len(seed_results) + len(walk_steps)}"
+                )
+
             except Exception as e:
                 typer.echo(f"Error during graph walk: {e}")
                 raise typer.Exit(1)
-                
+
         case ("error", err):
             typer.echo(f"Configuration error: {err}")
             raise typer.Exit(1)

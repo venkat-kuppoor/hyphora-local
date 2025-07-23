@@ -10,25 +10,25 @@ from .config import HyphoraConfig
 def sanitize_fts5_query(text: str) -> str:
     """
     Sanitize text for use as an FTS5 query.
-    
+
     Args:
         text: Input text
-        
+
     Returns:
         Sanitized query string safe for FTS5
     """
     # First, escape FTS5 special characters by removing them
     # FTS5 special chars: " ^ * ( ) : { } [ ] -
-    cleaned_text = re.sub(r'["\^\*\(\)\:\{\}\[\]\-\?]', ' ', text)
-    
+    cleaned_text = re.sub(r'["\^\*\(\)\:\{\}\[\]\-\?]', " ", text)
+
     # Extract alphabetic words (3+ characters)
-    words = re.findall(r'\b[a-zA-Z]{3,}\b', cleaned_text.lower())
-    
+    words = re.findall(r"\b[a-zA-Z]{3,}\b", cleaned_text.lower())
+
     # Quote each term for safety
     quoted_terms = [f'"{word}"' for word in words]
-    
+
     # Join with spaces (each term is quoted for safety)
-    return ' '.join(quoted_terms) if quoted_terms else '"document"'
+    return " ".join(quoted_terms) if quoted_terms else '"document"'
 
 
 class SearchResult(NamedTuple):

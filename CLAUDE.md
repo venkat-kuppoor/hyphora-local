@@ -54,6 +54,10 @@ hyphora-local search "neural networks" --k 20 --rrf-k 100
 hyphora-local walk "your search query"
 hyphora-local walk "machine learning" --seed-limit 3 --max-hops 5 --score-threshold 0.01
 hyphora-local walk "neural networks" --weight-original 0.8 --weight-current 0.2
+
+# MMR-based graph walk for diversity-aware selection
+hyphora-local walk "deep learning" --mmr --mmr-lambda 0.7 --mmr-adjacent-k 10
+hyphora-local walk "transformers" --mmr --mmr-lambda 0.5 --max-hops 7
 ```
 
 ### Database Migrations
@@ -139,6 +143,19 @@ The `search` command supports several parameters for tuning search results:
 - Favor semantic similarity: `--weight-vec 2.0 --weight-fts 0.5`
 - Favor exact text matches: `--weight-fts 2.0 --weight-vec 0.5`
 - Balanced approach: `--weight-fts 1.0 --weight-vec 1.0` (default)
+
+### Graph Walk with MMR
+
+The `walk` command supports MMR (Maximal Marginal Relevance) for diversity-aware document selection:
+
+- `--mmr`: Enable MMR mode for diverse document selection
+- `--mmr-lambda`: Balance between relevance and diversity (0=pure diversity, 1=pure relevance, default: 0.5)
+- `--mmr-adjacent-k`: Maximum neighbors to consider per iteration (default: 5)
+
+**MMR Algorithm**: Balances document relevance to the query with diversity from already selected documents:
+- MMR Score = λ × similarity_to_query - (1-λ) × max_similarity_to_selected
+- Higher λ favors relevance, lower λ favors diversity
+- Prevents redundant document selection while maintaining relevance
 
 ### Important Notes
 
