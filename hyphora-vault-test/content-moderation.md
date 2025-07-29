@@ -1,0 +1,11 @@
+---
+title: Content Moderation
+type: feature
+tags: [#security, #compliance, #content-management]
+---
+
+Content moderation in CollabVault employs advanced artificial intelligence and rule-based systems to automatically identify and handle inappropriate, sensitive, or non-compliant content across the platform. The moderation engine analyzes text, images, and files in real-time as they flow through [[message-channels|channels]], [[wiki-pages|wiki pages]], and [[file-storage|file uploads]], applying policies that reflect organizational standards and regulatory requirements defined in the [[compliance-framework|compliance framework]]. Unlike simple keyword filtering, the system understands context and intent through natural language processing and computer vision technologies.
+
+The moderation system operates in multiple modes including preventive blocking where content is held for review before publication, post-publication scanning with retroactive action capabilities, and advisory mode where users are warned about potential issues without blocking. Moderation policies can be customized based on [[workspace-isolation|workspace]] requirements, [[data-classification|content sensitivity]], and user [[rbac-model|roles]], with different thresholds and actions for different contexts. All moderation decisions are logged in the [[audit-logs|audit system]] with detailed explanations for transparency and potential appeals.
+
+Advanced moderation features include multilingual support with cultural context awareness, image and video analysis for visual content compliance, and learning capabilities that improve accuracy based on reviewer feedback. The system integrates with the [[threat-detection|threat detection engine]] to identify coordinated attempts to bypass moderation and with the [[data-loss-prevention|DLP system]] to prevent sensitive information leakage through encoded or obfuscated content. Moderation performance metrics are tracked through the [[performance-analytics|analytics platform]], providing insights into content trends and policy effectiveness.

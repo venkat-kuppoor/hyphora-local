@@ -1,0 +1,11 @@
+---
+title: Change Management
+type: feature
+tags: [#governance, #operations, #process-control]
+---
+
+Change management in CollabVault provides a structured approach to controlling modifications across the platform, from configuration updates to major architectural changes, ensuring that all changes are properly evaluated, approved, and tracked. The system enforces separation of duties where change requesters, approvers, and implementers must be different individuals, preventing unauthorized modifications while maintaining operational agility. Every change request is evaluated against potential impacts on [[compliance-framework|compliance requirements]], [[workspace-isolation|security boundaries]], and system stability before approval.
+
+The change management workflow integrates with the [[automated-workflows|workflow engine]] to route approval requests based on change type, risk level, and affected components. High-risk changes affecting [[data-classification|classified data handling]], [[access-control|access controls]], or [[encryption-key-management|cryptographic systems]] require multiple approvals and may trigger additional security reviews. All changes are tested in isolated environments that mirror production configurations, with automated testing validating that changes don't introduce vulnerabilities or break existing functionality before deployment.
+
+Advanced change management features include automated rollback capabilities that can quickly revert problematic changes, change collision detection that identifies conflicts between concurrent modifications, and predictive impact analysis using historical data from the [[performance-analytics|analytics platform]]. The system maintains complete change history in the [[audit-logs|audit system]], enabling forensic analysis of how the platform evolved over time. Integration with the [[incident-response|incident response system]] allows security teams to quickly identify recent changes that might have contributed to security events, while [[compliance-reporting|compliance reports]] demonstrate adherence to change control requirements for auditors.

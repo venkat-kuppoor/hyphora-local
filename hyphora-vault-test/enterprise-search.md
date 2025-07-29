@@ -1,0 +1,11 @@
+---
+title: Enterprise Search
+type: feature
+tags: [#search, #knowledge-management, #productivity]
+---
+
+Enterprise search in CollabVault provides unified access to all organizational knowledge while respecting security boundaries and access permissions. Built on the [[search-indexing|search indexing infrastructure]], the enterprise search interface enables users to find information across [[message-channels|conversations]], [[wiki-pages|documents]], [[file-storage|files]], and metadata through a single query interface. The search system employs advanced natural language understanding to interpret user intent, expand queries with synonyms and related concepts from the [[knowledge-graph|knowledge graph]], and rank results based on relevance, recency, and user context.
+
+Search results are dynamically filtered based on the user's [[access-control|access permissions]], [[data-classification|classification clearances]], and [[workspace-isolation|workspace memberships]], ensuring that sensitive information never appears in unauthorized search results. The system implements federated search capabilities that can query external systems through [[integration-connectors|integration connectors]] while maintaining consistent security policies. Advanced features include faceted search for filtering results, saved searches with alerting for new matches, and collaborative search sessions where teams can share and annotate search results.
+
+The enterprise search system provides rich analytics on search patterns and effectiveness, helping organizations understand what information users seek and whether they find it successfully. Integration with the [[automated-workflows|workflow engine]] enables search-triggered automations, while the [[audit-logs|audit system]] tracks all search queries for security monitoring and compliance. The search interface adapts to user behavior over time, personalizing results while maintaining privacy through differential privacy techniques that prevent individual tracking while enabling aggregate optimization.

@@ -1,0 +1,11 @@
+---
+title: Federated Search
+type: feature
+tags: [#search, #integration, #knowledge-management]
+---
+
+Federated search capabilities in CollabVault extend the [[enterprise-search|enterprise search]] functionality to query external data sources while maintaining security and compliance controls. The federated search infrastructure connects to various external repositories through [[integration-connectors|secure connectors]], translates queries into system-specific formats, and aggregates results into a unified interface. This enables users to search across CollabVault and connected systems like document management platforms, CRM systems, and code repositories without switching contexts or compromising security.
+
+The federation layer implements sophisticated security controls that ensure external search results respect CollabVault's [[access-control|access policies]] and [[data-classification|classification requirements]]. Results from external systems are dynamically filtered based on the user's permissions in both CollabVault and the source system, preventing information leakage through search aggregation. The system maintains detailed [[audit-logs|audit trails]] of all federated searches, tracking which external systems were queried and what results were returned to support compliance investigations and security monitoring.
+
+Advanced federation features include result ranking algorithms that normalize relevance scores across different search engines, caching mechanisms that improve performance while respecting data freshness requirements, and query translation that maps CollabVault's semantic search capabilities to simpler keyword-based external systems. The federated search system integrates with the [[knowledge-graph|knowledge graph]] to understand relationships between internal and external content, and with the [[threat-detection|threat detection system]] to identify suspicious search patterns that might indicate reconnaissance activities. Performance metrics collected through the [[performance-analytics|analytics platform]] help optimize federation strategies and identify frequently accessed external sources that might benefit from deeper integration.

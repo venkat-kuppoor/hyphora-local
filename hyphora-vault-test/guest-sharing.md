@@ -1,0 +1,11 @@
+---
+title: Guest Sharing
+type: feature
+tags: [#collaboration, #access-control, #external-users]
+---
+
+Guest sharing capabilities in CollabVault enable organizations to collaborate with external partners, vendors, and consultants while maintaining strict security boundaries and compliance with regulatory requirements. The feature implements a zero-trust approach where guest users operate in sandboxed environments with explicitly granted, time-limited permissions that are continuously validated against the [[access-control|access control policies]] and monitored through comprehensive [[audit-logs|audit logging]].
+
+Guest access is governed by sponsor-based workflows where internal users must nominate and take responsibility for external collaborators, with approval chains determined by the sensitivity of resources being shared as defined in the [[data-classification|data classification system]]. Each guest receives a unique identity within the platform that is cryptographically linked to their sponsor, enabling full accountability and traceability. The [[rbac-model|RBAC model]] supports special guest-specific roles that typically provide read-only or limited modification rights, with all actions performed by guests subject to enhanced monitoring and stricter rate limiting.
+
+The technical implementation ensures that guest users cannot access any resources beyond their explicitly granted permissions, with data shared to guests automatically copied to isolated [[workspace-isolation|workspace partitions]] rather than granting direct access to internal resources. This approach prevents guests from discovering the broader organizational structure or accessing unintended information through inference attacks. All guest sessions are encrypted end-to-end using the platform's [[end-to-end-encryption|E2EE infrastructure]], and organizations can enforce additional controls such as watermarking, download prevention, and automatic expiration of shared content based on their [[compliance-framework|compliance requirements]].

@@ -1,0 +1,11 @@
+---
+title: Real-Time Monitoring
+type: feature
+tags: [#security, #monitoring, #operations]
+---
+
+CollabVault's real-time monitoring system provides continuous visibility into platform health, security posture, and compliance status through advanced stream processing of system events, user activities, and performance metrics. The monitoring infrastructure ingests data from multiple sources including application logs, infrastructure metrics, [[audit-logs|audit log streams]], and security sensors, correlating events in real-time to detect threats, anomalies, and compliance violations before they impact the organization.
+
+The system employs machine learning algorithms trained on historical patterns to establish baseline behaviors for users, applications, and data flows within the platform. Deviations from these baselines trigger intelligent alerts that consider context from the [[rbac-model|RBAC model]], [[data-classification|data classification levels]], and current threat intelligence to reduce false positives while ensuring critical issues receive immediate attention. The monitoring system also tracks compliance metrics in real-time, providing dashboards that show adherence to policies defined in the [[compliance-engine|compliance engine]] and highlighting areas requiring attention.
+
+Integration with the [[knowledge-graph|knowledge graph]] enables the monitoring system to understand relationships between different entities and events, allowing for sophisticated threat detection that identifies attack patterns spanning multiple users, workspaces, or time periods. The system supports custom monitoring rules written in a domain-specific language, enabling security teams to encode organization-specific threat indicators and compliance checks. All monitoring data is retained according to the [[data-retention-policy|data retention policies]] and can be exported to external SIEM platforms for broader enterprise security operations while maintaining the [[end-to-end-encryption|encryption]] of sensitive information throughout the monitoring pipeline.

@@ -1,0 +1,11 @@
+---
+title: Security Orchestration
+type: feature
+tags: [#security, #automation, #integration]
+---
+
+Security orchestration in CollabVault automates and coordinates complex security operations across multiple systems and tools, enabling rapid response to threats while maintaining consistency and compliance. The orchestration platform integrates signals from the [[threat-detection|threat detection system]], [[real-time-monitoring|monitoring infrastructure]], and external security tools to trigger automated playbooks that investigate, contain, and remediate security incidents. These playbooks are defined using a visual workflow designer similar to [[automated-workflows|business process automation]] but specialized for security operations.
+
+The orchestration engine can automatically execute a wide range of security actions including user [[session-management|session termination]], [[access-control|permission revocation]], [[workspace-isolation|workspace quarantine]], and evidence collection for [[incident-response|incident response]]. Each playbook execution is fully auditable through the [[audit-logs|audit system]] with decision logging that explains why specific actions were taken. The platform supports human-in-the-loop workflows where critical decisions require security analyst approval while routine actions proceed automatically, balancing automation efficiency with human judgment for complex scenarios.
+
+Advanced orchestration capabilities include threat intelligence enrichment that automatically gathers context about security indicators, cross-platform coordination that synchronizes responses across CollabVault and integrated enterprise security tools through the [[api-gateway|API gateway]], and adaptive playbooks that learn from previous executions to improve response effectiveness. The orchestration system respects [[compliance-framework|compliance requirements]] by ensuring that automated actions don't violate regulatory constraints, and provides comprehensive metrics through the [[performance-analytics|analytics platform]] to measure and improve security operation efficiency.

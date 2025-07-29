@@ -5,13 +5,15 @@ from pathlib import Path
 from typing import Literal
 
 CONFIG_DIR_NAME = ".hyphora"
+VAULT_DIR_NAME = "hyphora-vault-test"
 CONFIG_FILE_NAME = "hyphora.toml"
-VAULT_DIR_NAME = "hyphora-vault"
+DB_FILE_NAME = "hyphora.db"
 
 
 @dataclass(frozen=True)
 class HyphoraConfig:
     vault_path: Path
+    db_path: Path
 
 
 ConfigResult = tuple[Literal["ok"], HyphoraConfig] | tuple[Literal["error"], str]
@@ -23,6 +25,7 @@ def load_hyphora_config(project_root: Path | None = None) -> ConfigResult:
 
     config_path = project_root / CONFIG_FILE_NAME
     vault_path = project_root / VAULT_DIR_NAME
+    db_path = project_root / CONFIG_DIR_NAME / DB_FILE_NAME
 
     if not config_path.exists():
         return ("error", f"Missing config file: {config_path}")
@@ -30,10 +33,14 @@ def load_hyphora_config(project_root: Path | None = None) -> ConfigResult:
     if not vault_path.exists():
         return ("error", f"Missing vault folder: {vault_path}")
 
+    if not vault_path.exists():
+        return ("error", f"Missing db file: {db_path}")
+
     return (
         "ok",
         HyphoraConfig(
             vault_path=vault_path.resolve(),
+            db_path=db_path.resolve(),
         ),
     )
     # try:

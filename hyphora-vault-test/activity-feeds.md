@@ -1,0 +1,11 @@
+---
+title: Activity Feeds
+type: feature
+tags: [#collaboration, #user-experience, #real-time]
+---
+
+Activity feeds in CollabVault provide personalized, real-time streams of relevant events and updates across the platform, helping users stay informed about important changes without being overwhelmed by noise. The feed system uses machine learning algorithms to understand user interests based on their interaction patterns, [[rbac-model|role assignments]], and collaboration networks mapped in the [[knowledge-graph|knowledge graph]]. Each feed item is evaluated for relevance and filtered according to [[access-control|access permissions]] and [[data-classification|classification levels]], ensuring users only see activities they're authorized to view.
+
+The activity feed architecture processes millions of events per second from various sources including [[message-channels|channel conversations]], [[wiki-pages|document updates]], [[file-storage|file modifications]], and system notifications. Events are enriched with contextual information, aggregated to reduce redundancy, and ranked by importance considering factors such as the user's relationship to the actor, content sensitivity, and temporal relevance. The system maintains separate feed indices for each [[workspace-isolation|workspace]] to ensure complete isolation while enabling cross-workspace feeds for users with appropriate permissions.
+
+Advanced feed features include intelligent summarization that groups related activities into digestible updates, time-travel capabilities powered by the [[versioning-system|versioning system]] to view historical activity snapshots, and predictive highlighting that anticipates which updates users will find most valuable. All feed interactions are tracked in the [[audit-logs|audit logs]] for security monitoring, while the [[performance-analytics|analytics system]] provides insights into information flow patterns across the organization. The feed system integrates with the [[notification-system|notification infrastructure]] to ensure important activities reach users through their preferred channels.

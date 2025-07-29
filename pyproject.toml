@@ -8,7 +8,11 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "caribou>=0.4.1",
     "networkx>=3.5",
+    "numpy>=2.3.1",
+    "ollama>=0.5.1",
+    "sqlite-vec>=0.1.6",
     "typer>=0.16.0",
 ]
 

@@ -1,0 +1,11 @@
+---
+title: Role Mining
+type: feature
+tags: [#security, #access-management, #analytics]
+---
+
+Role mining in CollabVault uses machine learning algorithms to analyze user access patterns and automatically discover optimal role definitions for the [[rbac-model|RBAC system]]. By examining historical [[audit-logs|audit log data]], actual resource usage, and organizational structures, the role mining engine identifies common permission sets that can be consolidated into reusable roles. This data-driven approach helps organizations move away from ad-hoc permission assignments toward a structured, maintainable access control model that aligns with actual business needs.
+
+The role mining system continuously monitors permission usage across the platform, identifying over-privileged users who have access to resources they never use, under-privileged users who frequently request additional access, and permission anomalies that might indicate security risks. The engine considers temporal patterns, [[workspace-isolation|workspace boundaries]], and [[data-classification|data sensitivity levels]] when suggesting role modifications. All recommendations go through approval workflows managed by the [[compliance-engine|compliance engine]] before implementation, ensuring that automated optimization doesn't compromise security.
+
+Advanced role mining capabilities include role hierarchy discovery that identifies natural permission inheritance patterns, segregation of duties analysis that prevents dangerous permission combinations, and peer group analysis that suggests appropriate access based on similar users' permissions. The system integrates with [[user-provisioning|provisioning workflows]] to automatically assign discovered roles to new users and with the [[threat-detection|threat detection system]] to identify suspicious permission changes. Role mining insights are visualized through the [[performance-analytics|analytics platform]], helping security teams understand and optimize their access control landscape.

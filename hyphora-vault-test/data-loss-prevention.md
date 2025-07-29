@@ -1,0 +1,11 @@
+---
+title: Data Loss Prevention
+type: feature
+tags: [#security, #compliance, #data-protection]
+---
+
+Data Loss Prevention (DLP) in CollabVault provides intelligent controls that prevent sensitive information from leaving the platform through unauthorized channels while enabling legitimate business workflows. The DLP engine uses advanced pattern matching, machine learning, and contextual analysis to identify sensitive data based on [[data-classification|classification markers]], regulatory patterns, and custom organizational rules. Unlike traditional DLP solutions, CollabVault's implementation is deeply integrated with the platform's [[knowledge-graph|knowledge graph]], enabling understanding of data relationships and context beyond simple pattern matching.
+
+The DLP system monitors all potential egress points including file downloads, API calls through the [[api-gateway|API gateway]], [[webhook-management|webhook deliveries]], and content shared with [[guest-sharing|external users]]. When sensitive data is detected, the system can take various actions ranging from logging in the [[audit-logs|audit system]] to blocking transfers or requiring additional authorization through the [[rbac-model|RBAC model]]. The DLP engine respects [[workspace-isolation|workspace boundaries]] while maintaining visibility across the platform to detect sophisticated exfiltration attempts that might span multiple channels or time periods.
+
+Advanced DLP capabilities include optical character recognition (OCR) for images and scanned documents, semantic analysis that identifies sensitive concepts even when specific keywords aren't present, and behavioral analytics that detect unusual data access patterns through integration with the [[threat-detection|threat detection system]]. The DLP policies are managed through the [[compliance-engine|compliance engine]] and can be customized based on user roles, data types, and destination contexts. All DLP events are retained according to [[data-retention-policy|retention policies]] and provide detailed forensic information for incident investigation.

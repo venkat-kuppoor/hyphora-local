@@ -1,0 +1,11 @@
+---
+title: Legal Hold
+type: feature
+tags: [#compliance, #legal, #data-retention]
+---
+
+Legal hold functionality in CollabVault provides comprehensive capabilities for preserving electronically stored information (ESI) in response to litigation, regulatory investigations, or audit requirements. The system enables legal teams to quickly identify, preserve, and collect relevant data across all platform components including [[message-channels|messages]], [[wiki-pages|documents]], [[file-storage|files]], and even metadata, while maintaining chain of custody documentation required for legal proceedings. All legal hold operations are tightly integrated with the [[compliance-framework|compliance framework]] and generate detailed [[audit-logs|audit trails]].
+
+The legal hold system implements intelligent scoping capabilities that use the [[knowledge-graph|knowledge graph]] to identify related content beyond simple keyword searches. When a legal hold is initiated, the system automatically suspends normal [[data-retention-policy|retention policies]] for affected content and creates immutable preservation copies. The platform supports multiple concurrent legal holds with overlapping scope, managing the complex interactions between different preservation requirements while ensuring that no relevant data is inadvertently deleted when one hold is released while another remains active.
+
+Advanced features include custodian management that tracks individuals whose data is subject to holds, automated notification workflows that inform affected users of their preservation obligations, and integration with e-discovery platforms through the [[api-gateway|API gateway]]. The system provides cost estimation tools that help legal teams understand the storage and processing implications of hold scope, while privacy-preserving review capabilities enable legal teams to assess content relevance without exposing sensitive information beyond what's necessary. All hold activities respect [[rbac-model|RBAC permissions]] and [[data-classification|classification levels]], ensuring that legal processes don't bypass security controls.

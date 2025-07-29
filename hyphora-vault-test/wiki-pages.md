@@ -1,0 +1,11 @@
+---
+title: Wiki Pages
+type: feature
+tags: [#knowledge-management, #collaboration, #documentation]
+---
+
+Wiki pages in CollabVault provide structured, version-controlled documentation capabilities that enable teams to collaboratively build and maintain their organizational knowledge base. Unlike traditional wikis, CollabVault's implementation deeply integrates with the platform's security and compliance infrastructure, ensuring that sensitive documentation is protected by the same [[access-control|access controls]] and [[end-to-end-encryption|encryption]] as other platform content while being discoverable through the [[knowledge-graph|knowledge graph]].
+
+Each wiki page maintains a complete version history with differential tracking, allowing teams to understand how documentation evolved over time while meeting [[compliance-framework|compliance requirements]] for document retention and auditability. The editing experience supports real-time collaboration with conflict resolution, where multiple users can simultaneously work on the same page with changes merged intelligently. Rich formatting capabilities include support for tables, diagrams, code blocks, and embedded multimedia, with all content automatically processed by the [[data-classification|data classification system]] to ensure appropriate handling of sensitive information.
+
+The wiki system's unique strength lies in its automatic relationship extraction and cross-referencing capabilities. As users create and edit pages, the system identifies connections between concepts, people, projects, and processes, building a rich semantic network that enhances information discovery. Integration with the platform's messaging channels allows wiki pages to be referenced in conversations, with automatic notifications when referenced pages are updated. All wiki operations generate detailed [[audit-logs|audit log entries]], and pages can be configured with approval workflows for changes to critical documentation, ensuring that important knowledge assets maintain their integrity while remaining accessible to authorized users.
