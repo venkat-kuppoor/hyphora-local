@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "caribou>=0.4.1",
+    "fastmcp>=2.10.6",
     "networkx>=3.5",
     "numpy>=2.3.1",
     "ollama>=0.5.1",
