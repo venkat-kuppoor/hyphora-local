@@ -1,7 +1,5 @@
 """FastMCP server for Hyphora hybrid search and graph walk functionality."""
 
-import numpy as np
-import ollama  # type: ignore[import-untyped]
 from fastmcp import FastMCP
 from typing import Optional, Any
 
@@ -33,26 +31,30 @@ async def select_seed_documents(
 ) -> dict[str, Any]:
     """
     Select initial seed documents using hybrid search (FTS5 + vector embeddings).
-    
+
     This tool performs the first stage of knowledge graph exploration by finding
     the most relevant starting points. However, using graph walk after seed selection
     is highly recommended as it traverses the information-rich knowledge graph to
     discover additional relevant documents through high-quality relationships that
     may not surface in direct search.
-    
+
     Args:
-        query: Search query
-        limit: Number of seed documents to return
-        k: Number of candidates from each search method
-        rrf_k: RRF constant for rank fusion
-        weight_fts: Weight for FTS5 text search results
-        weight_vec: Weight for vector similarity results
-    
+        query: Search query text
+        limit: Number of seed documents to return (default: 5, range: 1-20)
+        k: Number of candidates to retrieve from each search method before fusion
+           (default: 10, range: 5-50). Higher values cast a wider net.
+        rrf_k: Reciprocal Rank Fusion constant that controls ranking behavior
+               (default: 60, range: 10-100). Lower values favor top-ranked items more strongly.
+        weight_fts: Weight multiplier for full-text search results (default: 1.0, range: 0-5).
+                    Higher values prioritize exact/partial text matches.
+        weight_vec: Weight multiplier for vector similarity results (default: 1.0, range: 0-5).
+                    Higher values prioritize semantic similarity.
+
     Returns:
-        Selected seed documents with relevance scores
+        Selected seed documents with relevance scores, rankings, and full content
     """
     config = get_config()
-    
+
     results = search_documents(
         config,
         query,
@@ -62,7 +64,7 @@ async def select_seed_documents(
         weight_vec=weight_vec,
         limit=limit,
     )
-    
+
     return {
         "query": query,
         "seed_documents": [
@@ -102,35 +104,56 @@ async def graph_walk(
 ) -> dict[str, Any]:
     """
     Traverse the knowledge graph starting from seed documents to discover related content.
-    
+
     This tool can be used in two ways:
     1. Provide seed_documents from select_seed_documents() for manual control
     2. Provide only a query to automatically run hybrid search + graph walk in one go
-    
+
     The graph walk explores document relationships to find relevant information that
     may not appear in direct search results but is connected through the knowledge graph.
-    
+
     Args:
-        query: Original search query
-        seed_documents: Optional list of seed documents (if not provided, runs hybrid search first)
-        max_hops: Maximum number of graph traversal hops
-        score_threshold: Minimum score to continue traversal
-        use_mmr: Enable MMR for diversity-aware selection
-        mmr_lambda: MMR balance (0=diversity, 1=relevance)
-        mmr_adjacent_k: Max neighbors per MMR iteration
-        weight_original: Weight for original query in scoring
-        weight_current: Weight for current node content
-        seed_limit: Number of seeds (if running integrated search)
-        k: Candidates per search method (if running integrated search)
-        rrf_k: RRF constant (if running integrated search)
-        weight_fts: FTS5 weight (if running integrated search)
-        weight_vec: Vector weight (if running integrated search)
-    
+        query: Original search query text
+        seed_documents: Optional list of document objects from select_seed_documents().seed_documents array.
+                       Each object should contain these fields from the seed selection results:
+                       - id (required): Document ID (integer)
+                       - title (required): Document title (string)
+                       - content (optional): Full document content (string)
+                       - combined_score (optional): Combined relevance score (float)
+                       - vec_rank (optional): Vector search rank (integer or null)
+                       - fts_rank (optional): Full-text search rank (integer or null)
+                       - vec_distance (optional): Vector distance (float or null)
+                       - fts_score (optional): Full-text search score (float or null)
+                       Example: [{"id": 42, "title": "Graph Theory", "content": "...", "combined_score": 0.85}, ...]
+                       If not provided, runs hybrid search automatically.
+        max_hops: Maximum graph traversal depth from seed documents (default: 5, range: 1-10).
+                  Each hop follows links to neighboring documents.
+        score_threshold: Minimum relevance score to continue traversal (default: 0.01, range: 0-1).
+                        Lower values explore more broadly, higher values stay focused.
+        use_mmr: Enable Maximal Marginal Relevance for diversity-aware selection (default: False).
+                 MMR balances relevance with diversity to avoid redundant documents.
+        mmr_lambda: MMR diversity balance (default: 0.5, range: 0-1).
+                    0 = maximum diversity (avoid similar documents)
+                    1 = maximum relevance (ignore diversity)
+                    0.5 = balanced approach
+        mmr_adjacent_k: Maximum neighbors to evaluate per MMR iteration (default: 5, range: 1-20).
+                        Higher values consider more options but increase computation.
+        weight_original: Weight for original query when scoring neighbors (default: 0.7, range: 0-1).
+                        Higher values keep focus on initial query throughout traversal.
+        weight_current: Weight for current document content when scoring neighbors (default: 0.3, range: 0-1).
+                       Higher values allow more topic drift based on current context.
+                       Note: weight_original + weight_current should equal 1.0
+        seed_limit: Number of initial seeds if running integrated search (default: 3, range: 1-10)
+        k: Candidates per search method if running integrated search (default: 10, range: 5-50)
+        rrf_k: RRF constant if running integrated search (default: 60, range: 10-100)
+        weight_fts: FTS5 weight if running integrated search (default: 1.0, range: 0-5)
+        weight_vec: Vector weight if running integrated search (default: 1.0, range: 0-5)
+
     Returns:
-        Graph walk path with discovered documents and traversal details
+        Graph walk path with discovered documents, traversal details, and full content
     """
     config = get_config()
-    
+
     # Convert seed documents to SearchResult objects or run search
     if seed_documents:
         # Use provided seed documents
@@ -143,7 +166,9 @@ async def graph_walk(
                     content=doc.get("content", ""),
                     vec_rank=doc.get("vec_rank"),
                     fts_rank=doc.get("fts_rank"),
-                    combined_rank=doc.get("combined_score", doc.get("combined_rank", 1.0)),
+                    combined_rank=doc.get(
+                        "combined_score", doc.get("combined_rank", 1.0)
+                    ),
                     vec_distance=doc.get("vec_distance"),
                     fts_score=doc.get("fts_score"),
                 )
@@ -159,7 +184,7 @@ async def graph_walk(
             weight_vec=weight_vec,
             limit=seed_limit,
         )
-    
+
     if not seed_results:
         return {
             "query": query,
@@ -167,7 +192,7 @@ async def graph_walk(
             "walk_path": [],
             "error": "No seed documents found",
         }
-    
+
     # Perform graph walk
     walk_steps = recursive_graph_walk(
         config,
@@ -186,7 +211,7 @@ async def graph_walk(
         mmr_lambda=mmr_lambda,
         mmr_adjacent_k=mmr_adjacent_k,
     )
-    
+
     return {
         "query": query,
         "mode": "mmr" if use_mmr else "standard",
@@ -219,10 +244,13 @@ async def graph_walk(
             for step in walk_steps
         ],
         "total_documents_found": len(walk_steps),
-        "max_distance_reached": max([s.distance_from_seed for s in walk_steps]) if walk_steps else 0,
+        "max_distance_reached": max([s.distance_from_seed for s in walk_steps])
+        if walk_steps
+        else 0,
     }
 
 
 if __name__ == "__main__":
     # Run the MCP server
     mcp.run()
+
