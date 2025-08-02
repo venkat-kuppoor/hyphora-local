@@ -33,7 +33,9 @@ async def select_seed_documents(
     Select initial seed documents using hybrid search (FTS5 + vector embeddings).
 
     This tool performs the first stage of knowledge graph exploration by finding
-    the most relevant starting points. However, using graph walk after seed selection
+    the most relevant starting points.
+    Feel free to use this tool if a user provides a prompt without any context.
+    Keep in mind, using graph walk after seed selection
     is highly recommended as it traverses the information-rich knowledge graph to
     discover additional relevant documents through high-quality relationships that
     may not surface in direct search.
@@ -90,8 +92,8 @@ async def graph_walk(
     seed_documents: Optional[list[dict[str, Any]]] = None,
     max_hops: int = 5,
     score_threshold: float = 0.01,
-    use_mmr: bool = False,
-    mmr_lambda: float = 0.5,
+    use_mmr: bool = True,
+    mmr_lambda: float = 0.635,
     mmr_adjacent_k: int = 5,
     weight_original: float = 0.7,
     weight_current: float = 0.3,
@@ -106,7 +108,7 @@ async def graph_walk(
     Traverse the knowledge graph starting from seed documents to discover related content.
 
     This tool can be used in two ways:
-    1. Provide seed_documents from select_seed_documents() for manual control
+    1. Provide seed_documents from select_seed_documents() for manual control. Choose to omit seeds you don't think are relevant.
     2. Provide only a query to automatically run hybrid search + graph walk in one go
 
     The graph walk explores document relationships to find relevant information that
@@ -130,12 +132,13 @@ async def graph_walk(
                   Each hop follows links to neighboring documents.
         score_threshold: Minimum relevance score to continue traversal (default: 0.01, range: 0-1).
                         Lower values explore more broadly, higher values stay focused.
-        use_mmr: Enable Maximal Marginal Relevance for diversity-aware selection (default: False).
+        use_mmr: Enable Maximal Marginal Relevance for diversity-aware selection (default: True).
                  MMR balances relevance with diversity to avoid redundant documents.
-        mmr_lambda: MMR diversity balance (default: 0.5, range: 0-1).
+        mmr_lambda: MMR diversity balance (default: 0.635, range: 0-1).
                     0 = maximum diversity (avoid similar documents)
                     1 = maximum relevance (ignore diversity)
-                    0.5 = balanced approach
+                    0.635 = more balanced approach, but leaning towards relevance.
+                    if no results appear, then try incrementing this by 0.05 at a time until results appear.
         mmr_adjacent_k: Maximum neighbors to evaluate per MMR iteration (default: 5, range: 1-20).
                         Higher values consider more options but increase computation.
         weight_original: Weight for original query when scoring neighbors (default: 0.7, range: 0-1).
