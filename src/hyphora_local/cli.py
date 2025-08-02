@@ -295,17 +295,8 @@ def walk(
 @app.command()
 def serve():
     """Start the FastMCP server for Hyphora search and graph walk tools."""
-    typer.echo("Starting Hyphora FastMCP server...")
-    typer.echo("-" * 50)
-    
-    # Import and run the MCP server
     from hyphora_local.server import mcp
-    
-    typer.echo("Server starting with tools:")
-    typer.echo("  - select_seed_documents: Hybrid search for initial documents")
-    typer.echo("  - graph_walk: Traverse knowledge graph from seed documents")
-    typer.echo()
-    
+
     try:
         mcp.run()
     except KeyboardInterrupt:
